@@ -55,7 +55,7 @@ const ScoreDonut: React.FC<{ score: number }> = ({ score }) => {
       : 'text-red-500';
 
   return (
-    <div className="relative w-32 h-32 flex-shrink-0 flex items-center justify-center">
+    <div className="relative w-32 h-32 flex-shrink-0 flex items-center justify-center mx-auto sm:mx-0">
       <svg className="absolute w-full h-full" viewBox="0 0 100 100">
         <circle
           className="text-slate-200"
@@ -108,12 +108,12 @@ const RefineAnalysis: React.FC<{ onRefine: (feedback: string) => Promise<void> }
 
     return (
         <div className="bg-white p-6 border border-slate-200 rounded-xl shadow-sm mt-8">
-            <h2 className="text-xl font-semibold text-slate-800 mb-4">Refine Analysis</h2>
+            <h2 className="text-xl font-semibold text-dark mb-4">Refine Analysis</h2>
             <p className="text-slate-600 mb-4 text-sm">Not quite right? Provide feedback and let the AI try again.</p>
             
             <textarea
                 rows={3}
-                className="block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder:text-slate-400"
+                className="block w-full rounded-md border-slate-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm placeholder:text-slate-400"
                 placeholder="e.g., 'Focus more on the checkout button's color' or 'Are there better examples than Figma for this?'"
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
@@ -126,7 +126,7 @@ const RefineAnalysis: React.FC<{ onRefine: (feedback: string) => Promise<void> }
                 <button
                     onClick={handleRefineClick}
                     disabled={!feedback.trim() || isRefining}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-sm hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-all"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-2 bg-primary text-white font-semibold rounded-lg shadow-sm hover:bg-primary/90 disabled:bg-slate-300 disabled:cursor-not-allowed transition-all"
                 >
                     {isRefining ? (
                         <>
@@ -154,7 +154,7 @@ export const ReportStep: React.FC<ReportStepProps> = ({ report, files, onStartOv
         <div className="text-center">
             <h2 className="text-2xl font-bold text-red-600">Analysis Failed</h2>
             <p className="text-slate-600 mt-2">We couldn't generate a report. Please try again.</p>
-            <button onClick={onStartOver} className="mt-6 px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700">
+            <button onClick={onStartOver} className="mt-6 px-6 py-2 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90">
                 Start Over
             </button>
         </div>
@@ -177,14 +177,14 @@ export const ReportStep: React.FC<ReportStepProps> = ({ report, files, onStartOv
   return (
     <div className="w-full max-w-7xl mx-auto pb-12">
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8">
-        <h1 className="text-3xl font-bold text-slate-800">UX Analysis Report</h1>
-        <button onClick={onStartOver} className="px-5 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-sm hover:bg-indigo-700 transition-all">
+        <h1 className="text-3xl font-bold text-dark text-center sm:text-left">UX Analysis Report</h1>
+        <button onClick={onStartOver} className="w-full sm:w-auto px-5 py-2 bg-primary text-white font-semibold rounded-lg shadow-sm hover:bg-primary/90 transition-all">
           New Analysis
         </button>
       </div>
 
-      <div className="mb-8 bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
-        <h2 className="text-xl font-semibold text-slate-800 mb-4">Analyzed User Flow</h2>
+      <div className="mb-8 bg-white p-4 sm:p-6 border border-slate-200 rounded-xl shadow-sm">
+        <h2 className="text-xl font-semibold text-dark mb-4">Analyzed User Flow</h2>
         <FlowDiagram previews={previews} />
       </div>
 
@@ -192,18 +192,18 @@ export const ReportStep: React.FC<ReportStepProps> = ({ report, files, onStartOv
         <div className="lg:col-span-2 space-y-8">
             {/* Overview */}
             <div className="bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
-                <h2 className="text-xl font-semibold text-slate-800 mb-4">Executive Summary</h2>
-                <div className="flex flex-col sm:flex-row items-start gap-6">
+                <h2 className="text-xl font-semibold text-dark mb-4">Executive Summary</h2>
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
                     <ScoreDonut score={report.overallScore} />
                     <p className="text-slate-600 mt-2">{report.generalAnalysis}</p>
                 </div>
             </div>
 
             {/* Prioritization Matrix */}
-             <div className="bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
+             <div className="bg-white p-4 sm:p-6 border border-slate-200 rounded-xl shadow-sm">
                 <div className="flex items-center gap-3 mb-4">
                     <ChartBarIcon />
-                    <h2 className="text-2xl font-semibold text-slate-800">Prioritization Matrix</h2>
+                    <h2 className="text-2xl font-semibold text-dark">Prioritization Matrix</h2>
                 </div>
                 <p className="text-slate-600 mb-6 text-sm">Here's a strategic overview of the recommendations based on their potential impact and the effort required to implement them. Click an item to jump to its details.</p>
                 <PrioritizationMatrix recommendations={report.recommendations} onRecommendationClick={handleRecommendationClick} />
@@ -213,19 +213,19 @@ export const ReportStep: React.FC<ReportStepProps> = ({ report, files, onStartOv
             <div>
                 <div className="flex items-center gap-3 mb-4">
                     <TargetIcon />
-                    <h2 className="text-2xl font-semibold text-slate-800">Actionable Recommendations</h2>
+                    <h2 className="text-2xl font-semibold text-dark">Actionable Recommendations</h2>
                 </div>
                 <div className="space-y-6">
                 {report.recommendations.map((rec, index) => (
                     <div 
                         key={index} 
                         id={`rec-${index}`} 
-                        className={`border border-slate-200 rounded-xl shadow-sm transition-all duration-1000 ease-in-out ${highlightedRecIndex === index ? 'bg-indigo-50 shadow-indigo-200 shadow-lg' : 'bg-white'}`}
+                        className={`border border-slate-200 rounded-xl shadow-sm transition-all duration-1000 ease-in-out ${highlightedRecIndex === index ? 'bg-primary/10 shadow-primary/20 shadow-lg' : 'bg-white'}`}
                     >
                         <div className="p-6">
-                            <div className="flex items-start justify-between gap-4">
-                                <h3 className="text-lg font-semibold text-slate-900">{rec.title}</h3>
-                                <span className="flex-shrink-0 text-sm font-medium text-indigo-600 bg-indigo-100 px-3 py-1 rounded-full">Screen {rec.screenIndex + 1}</span>
+                            <div className="flex flex-col-reverse sm:flex-row sm:items-start sm:justify-between gap-4">
+                                <h3 className="text-lg font-semibold text-dark">{rec.title}</h3>
+                                <span className="flex-shrink-0 text-sm font-medium text-primary bg-primary/10 px-3 py-1 rounded-full self-start">Screen {rec.screenIndex + 1}</span>
                             </div>
                             <p className="mt-2 text-slate-600">{rec.description}</p>
                             <div className="mt-4 flex flex-wrap gap-2">
@@ -249,7 +249,7 @@ export const ReportStep: React.FC<ReportStepProps> = ({ report, files, onStartOv
             <div className="bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
                  <div className="flex items-center gap-3 mb-4">
                     <ThumbsUpIcon />
-                    <h2 className="text-xl font-semibold text-slate-800">What's Working Well</h2>
+                    <h2 className="text-xl font-semibold text-dark">What's Working Well</h2>
                 </div>
                 <ul className="space-y-3">
                     {report.positivePoints.map((point, index) => (
@@ -265,12 +265,12 @@ export const ReportStep: React.FC<ReportStepProps> = ({ report, files, onStartOv
             <div className="bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
                 <div className="flex items-center gap-3 mb-4">
                     <BuildingOfficeIcon />
-                    <h2 className="text-xl font-semibold text-slate-800">Best Practice Benchmarks</h2>
+                    <h2 className="text-xl font-semibold text-dark">Best Practice Benchmarks</h2>
                 </div>
                 <div className="space-y-5">
                 {report.benchmarks.map((benchmark, index) => (
                     <div key={index}>
-                        <h4 className="font-semibold text-slate-800">{benchmark.company}</h4>
+                        <h4 className="font-semibold text-dark">{benchmark.company}</h4>
                         <p className="text-slate-600 text-sm mt-1">{benchmark.description}</p>
                     </div>
                 ))}
@@ -281,19 +281,19 @@ export const ReportStep: React.FC<ReportStepProps> = ({ report, files, onStartOv
             <div className="bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
                 <div className="flex items-center gap-3 mb-4">
                     <AccessibilityIcon />
-                    <h2 className="text-xl font-semibold text-slate-800">Accessibility Scan</h2>
+                    <h2 className="text-xl font-semibold text-dark">Accessibility Scan</h2>
                 </div>
                  <div className="space-y-5">
                     {report.accessibilityReport && report.accessibilityReport.length > 0 ? (
                         report.accessibilityReport.map((issue, index) => (
                             <div key={index}>
                                 <div className="flex items-center justify-between gap-2">
-                                    <h4 className="font-semibold text-slate-800">{issue.title}</h4>
+                                    <h4 className="font-semibold text-dark">{issue.title}</h4>
                                     <SeverityTag severity={issue.severity} />
                                 </div>
                                  <p className="text-xs text-slate-500 mt-1">Screen {issue.screenIndex + 1}</p>
                                 <p className="text-slate-600 text-sm mt-2">{issue.description}</p>
-                                <p className="text-sm mt-2 font-medium text-indigo-700 bg-indigo-50 p-2 rounded-md">Recommendation: <span className="font-normal text-slate-700">{issue.recommendation}</span></p>
+                                <p className="text-sm mt-2 font-medium text-primary bg-primary/10 p-2 rounded-md">Recommendation: <span className="font-normal text-slate-700">{issue.recommendation}</span></p>
                             </div>
                         ))
                     ) : (

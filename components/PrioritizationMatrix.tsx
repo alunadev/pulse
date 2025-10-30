@@ -65,7 +65,7 @@ export const PrioritizationMatrix: React.FC<PrioritizationMatrixProps> = ({ reco
   return (
     <div className="flex w-full">
         {/* Y-AXIS LABELS */}
-        <div className="flex flex-col justify-between items-center w-12 py-10 text-center">
+        <div className="hidden md:flex flex-col justify-between items-center w-12 py-10 text-center">
             <span className="text-sm font-semibold text-slate-600">High</span>
             <span className="transform -rotate-90 whitespace-nowrap text-sm font-semibold text-slate-600">Impact</span>
             <span className="text-sm font-semibold text-slate-600">Low</span>
@@ -73,7 +73,7 @@ export const PrioritizationMatrix: React.FC<PrioritizationMatrixProps> = ({ reco
 
         {/* MATRIX & X-AXIS */}
         <div className="flex-1">
-            <div className="grid grid-cols-2 grid-rows-2 gap-4 h-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
                 {/* Top Left: Quick Wins (High Impact, Low Effort) */}
                 <Quadrant
                     title="🟢 Quick Wins"
@@ -108,7 +108,7 @@ export const PrioritizationMatrix: React.FC<PrioritizationMatrixProps> = ({ reco
             </div>
             
             {/* X-AXIS LABELS */}
-            <div className="grid grid-cols-2 text-center mt-2">
+            <div className="grid md:grid-cols-2 text-center mt-2">
                 <span className="text-sm font-semibold text-slate-600">Low Effort</span>
                 <span className="text-sm font-semibold text-slate-600">High Effort</span>
             </div>

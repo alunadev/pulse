@@ -20,7 +20,7 @@ export const FlowDiagram: React.FC<FlowDiagramProps> = ({ previews }) => {
               <img
                 src={src}
                 alt={`Screen ${index + 1}`}
-                className="h-56 rounded-lg border-2 border-slate-200 shadow-sm object-contain bg-slate-100"
+                className="h-48 sm:h-56 rounded-lg border-2 border-slate-200 shadow-sm object-contain bg-slate-100"
               />
               <p className="mt-2 text-sm font-medium text-slate-600">Screen {index + 1}</p>
             </div>

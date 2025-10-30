@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisReport } from '../types';
 
@@ -89,6 +88,7 @@ const responseSchema = {
 export const analyzeFlow = async (
   files: File[],
   objective: string,
+  sourceType: 'images' | 'video',
   refinement?: { previousReport: AnalysisReport; userFeedback: string; }
 ): Promise<AnalysisReport> => {
   if (!API_KEY) {
@@ -114,7 +114,11 @@ Now, the user has provided the following feedback on your analysis:
 
 Please provide a new, refined analysis based on this feedback. Update your previous recommendations, scores, accessibility findings, and insights as necessary to address the user's comments. Maintain the same JSON schema for your response. Your new analysis should be a complete replacement for the old one, incorporating the feedback directly into your insights.`;
   } else {
-    prompt = `My main goal is to: "${objective}". Based on this goal, please provide a comprehensive UX/UI analysis of the user flow presented in the following screenshots. The flow proceeds in the order the images are provided. 
+     const sourceDescription = sourceType === 'video' 
+      ? 'The flow is presented in sequential frames extracted from a video recording of a user session.' 
+      : 'The flow is presented in a series of static screenshots.';
+      
+    prompt = `My main goal is to: "${objective}". Based on this goal, please provide a comprehensive UX/UI analysis of the user flow. ${sourceDescription} The flow proceeds in the order the images are provided. 
     
     Please act as a world-class product designer and accessibility expert. Your analysis should be structured according to the JSON schema provided. Ensure your analysis is insightful and your recommendations are concrete and actionable.
     

@@ -6,7 +6,25 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pulse: AI-Powered UX Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Poppins', 'sans-serif'],
+            },
+            colors: {
+              primary: '#1E40AF',
+              dark: '#0A163F',
+            }
+          }
+        }
+      }
+    </script>
     <style>
       /* For a custom scrollbar to match the minimalist theme */
       ::-webkit-scrollbar {
@@ -35,7 +53,7 @@
 }
 </script>
 </head>
-  <body class="bg-slate-50 text-slate-900 antialiased">
+  <body class="bg-slate-50 text-dark antialiased font-sans">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
