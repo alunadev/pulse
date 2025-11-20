@@ -13,6 +13,7 @@ const App: React.FC = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [sourceType, setSourceType] = useState<'images' | 'video'>('images');
   const [objective, setObjective] = useState<string>('');
+  const [persona, setPersona] = useState<string>('standard');
   const [report, setReport] = useState<AnalysisReport | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,14 +23,15 @@ const App: React.FC = () => {
     setStep('objective');
   };
 
-  const handleObjectiveSubmit = async (selectedObjective: string) => {
+  const handleObjectiveSubmit = async (selectedObjective: string, selectedPersona: string) => {
     setObjective(selectedObjective);
+    setPersona(selectedPersona);
     setStep('analyzing');
     setError(null);
     setReport(null);
 
     try {
-      const result = await analyzeFlow(files, selectedObjective, sourceType);
+      const result = await analyzeFlow(files, selectedObjective, sourceType, selectedPersona);
       setReport(result);
       setStep('report');
     } catch (err: any) {
@@ -44,7 +46,7 @@ const App: React.FC = () => {
     setError(null); // Clear previous errors
     
     try {
-      const newReport = await analyzeFlow(files, objective, sourceType, {
+      const newReport = await analyzeFlow(files, objective, sourceType, persona, {
         previousReport: report,
         userFeedback: feedback,
       });
@@ -62,6 +64,7 @@ const App: React.FC = () => {
     setReport(null);
     setError(null);
     setSourceType('images');
+    setPersona('standard');
   };
   
   const handleBackToUpload = () => {

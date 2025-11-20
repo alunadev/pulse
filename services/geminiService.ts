@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisReport } from '../types';
 
@@ -85,10 +86,18 @@ const responseSchema = {
   required: ["overallScore", "generalAnalysis", "positivePoints", "recommendations", "benchmarks", "accessibilityReport"]
 };
 
+const PERSONA_PROMPTS: Record<string, string> = {
+  'standard': "Act as a world-class Product Designer. Provide a balanced analysis focusing on usability, visual hierarchy, and interaction design best practices.",
+  'conversion': "Act as a Growth Product Manager. Focus intensely on friction points, conversion optimization, call-to-action clarity, and user motivation. Be critical of anything that slows the user down.",
+  'accessibility': "Act as a Certified Accessibility Specialist. Prioritize WCAG 2.1 AA compliance. Focus on color contrast, touch targets, semantic structure, and potential screen reader issues.",
+  'copy': "Act as a UX Writer and Content Strategist. Focus on the clarity, tone, and conciseness of the text. Identify jargon, ambiguity, and opportunities for better microcopy.",
+};
+
 export const analyzeFlow = async (
   files: File[],
   objective: string,
   sourceType: 'images' | 'video',
+  persona: string = 'standard',
   refinement?: { previousReport: AnalysisReport; userFeedback: string; }
 ): Promise<AnalysisReport> => {
   if (!API_KEY) {
@@ -98,9 +107,10 @@ export const analyzeFlow = async (
   const imageParts = await Promise.all(files.map(fileToGenerativePart));
 
   let prompt: string;
+  const personaInstruction = PERSONA_PROMPTS[persona] || PERSONA_PROMPTS['standard'];
 
   if (refinement) {
-    prompt = `You are a world-class product designer and accessibility expert. You previously provided the following UX analysis (in JSON format):
+    prompt = `${personaInstruction} You previously provided the following UX analysis (in JSON format):
 
 """json
 ${JSON.stringify(refinement.previousReport)}
@@ -120,7 +130,7 @@ Please provide a new, refined analysis based on this feedback. Update your previ
       
     prompt = `My main goal is to: "${objective}". Based on this goal, please provide a comprehensive UX/UI analysis of the user flow. ${sourceDescription} The flow proceeds in the order the images are provided. 
     
-    Please act as a world-class product designer and accessibility expert. Your analysis should be structured according to the JSON schema provided. Ensure your analysis is insightful and your recommendations are concrete and actionable.
+    ${personaInstruction} Your analysis should be structured according to the JSON schema provided. Ensure your analysis is insightful and your recommendations are concrete and actionable.
     
     In the accessibilityReport section, perform a thorough accessibility analysis of the screens based on WCAG 2.1 AA principles. Identify issues related to color contrast, alternative text for images, touch target sizes, form labeling, and semantic structure. Provide a list of accessibility issues with a severity rating.`;
   }
@@ -140,6 +150,8 @@ Please provide a new, refined analysis based on this feedback. Update your previ
         responseMimeType: "application/json",
         responseSchema,
         temperature: 0.2,
+        // Enable thinking for deeper reasoning (Gemini 2.5 Flash)
+        thinkingConfig: { thinkingBudget: 4096 } 
       },
   });
 

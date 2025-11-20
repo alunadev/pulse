@@ -7,12 +7,14 @@ interface AnalysisStepProps {
 }
 
 const loadingMessages = [
-  "Performing heuristic evaluation...",
-  "Analyzing visual hierarchy and clarity...",
-  "Identifying potential usability issues...",
-  "Cross-referencing with UX best practices...",
-  "Compiling actionable recommendations...",
-  "Finalizing your report...",
+  "Initializing Gemini 2.5 Flash Thinking...",
+  "Analyzing visual hierarchy and components...",
+  "Reasoning about user interaction patterns...",
+  "Evaluating against persona constraints...",
+  "Identifying friction points and opportunities...",
+  "Simulating user journeys...",
+  "Synthesizing actionable recommendations...",
+  "Finalizing your strategic report...",
 ];
 
 export const AnalysisStep: React.FC<AnalysisStepProps> = ({ objective, fileCount }) => {
@@ -21,7 +23,7 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ objective, fileCount
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % loadingMessages.length);
-    }, 2500);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, []);
@@ -34,16 +36,16 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ objective, fileCount
         <div className="absolute inset-0 border-4 border-t-primary rounded-full animate-spin"></div>
       </div>
 
-      <h1 className="text-3xl font-bold text-dark mt-8">AI Analysis in Progress</h1>
+      <h1 className="text-3xl font-bold text-dark mt-8">AI Thinking in Progress</h1>
       <p className="text-slate-600 mt-2 text-lg">
         Pulse is analyzing your <span className="font-semibold">{fileCount} screens</span> to help you <span className="font-semibold text-primary">{objective}</span>.
       </p>
 
-      <div className="mt-8 h-6 text-slate-500 transition-opacity duration-500">
+      <div className="mt-8 h-6 text-slate-500 font-medium transition-opacity duration-500">
         {loadingMessages[currentMessageIndex]}
       </div>
 
-      <p className="text-sm text-slate-400 mt-12">This should only take a moment...</p>
+      <p className="text-sm text-slate-400 mt-12">This might take up to 30 seconds for deep reasoning...</p>
     </div>
   );
 };

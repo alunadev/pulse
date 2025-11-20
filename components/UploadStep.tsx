@@ -6,7 +6,7 @@ interface UploadStepProps {
   onFilesSelect: (files: File[], sourceType: 'images' | 'video') => void;
 }
 
-const FRAME_CAPTURE_INTERVAL_SECONDS = 1; // Capture one frame per second
+const MAX_FRAMES = 12; // Limit total frames to prevent token overload
 
 const extractFramesFromVideo = (videoFile: File): Promise<File[]> => {
   return new Promise((resolve, reject) => {
@@ -23,6 +23,12 @@ const extractFramesFromVideo = (videoFile: File): Promise<File[]> => {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       const duration = video.duration;
+      
+      // Smart sampling: calculate interval to get roughly MAX_FRAMES
+      // Ensure we don't capture more than 1 frame per second for very short videos
+      const calculatedInterval = duration / MAX_FRAMES;
+      const interval = Math.max(1, calculatedInterval);
+      
       let currentTime = 0;
       let frameCount = 0;
 
@@ -40,9 +46,9 @@ const extractFramesFromVideo = (videoFile: File): Promise<File[]> => {
             frameCount++;
           }
           
-          currentTime += FRAME_CAPTURE_INTERVAL_SECONDS;
+          currentTime += interval;
 
-          if (currentTime <= duration) {
+          if (currentTime < duration && files.length < MAX_FRAMES) {
             video.currentTime = currentTime;
           } else {
             URL.revokeObjectURL(video.src);
