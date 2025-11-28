@@ -1,13 +1,38 @@
 import React from 'react';
 
-// For App.tsx
-export const PulseLogo: React.FC<{ className?: string }> = ({ className }) => (
-  <div className={`flex items-center gap-2 ${className}`}>
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M4 14.88L8.64 14.88L11.52 4L16.32 24L19.2 14.88L24 14.88" stroke="#4F46E5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+// Standalone Pulse Icon (3 bars)
+export const PulseIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg className={className || "w-7 h-7 text-primary"} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+       <rect x="2" y="8" width="5" height="14" rx="2.5" fill="currentColor" />
+       <rect x="9.5" y="2" width="5" height="20" rx="2.5" fill="currentColor" />
+       <rect x="17" y="12" width="5" height="10" rx="2.5" fill="currentColor" />
     </svg>
-    <span className="text-2xl font-bold text-dark">Pulse</span>
+);
+
+// Updated Logo to match attached image: 3 bars + lowercase 'pulse'
+export const PulseLogo: React.FC<{ className?: string }> = ({ className }) => (
+  <div className={`flex items-center gap-2.5 ${className}`}>
+    <PulseIcon className="w-7 h-7 text-primary" />
+    <span className="text-3xl font-bold text-dark tracking-tight lowercase font-sans leading-none pt-1">pulse</span>
   </div>
+);
+
+// Animated version of the logo for loading states
+export const PulseLoader: React.FC<{ className?: string }> = ({ className }) => (
+    <svg className={className || "w-16 h-16 text-primary"} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+       <rect x="2" y="8" width="5" height="14" rx="2.5">
+         <animate attributeName="y" values="8;14;8" dur="1s" repeatCount="indefinite" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1" />
+         <animate attributeName="height" values="14;8;14" dur="1s" repeatCount="indefinite" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1" />
+       </rect>
+       <rect x="9.5" y="2" width="5" height="20" rx="2.5">
+         <animate attributeName="y" values="2;10;2" dur="1s" repeatCount="indefinite" begin="0.15s" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1" />
+         <animate attributeName="height" values="20;12;20" dur="1s" repeatCount="indefinite" begin="0.15s" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1" />
+       </rect>
+       <rect x="17" y="12" width="5" height="10" rx="2.5">
+         <animate attributeName="y" values="12;16;12" dur="1s" repeatCount="indefinite" begin="0.3s" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1" />
+         <animate attributeName="height" values="10;6;10" dur="1s" repeatCount="indefinite" begin="0.3s" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1" />
+       </rect>
+    </svg>
 );
 
 // For UploadStep.tsx

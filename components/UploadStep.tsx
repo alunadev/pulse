@@ -1,12 +1,11 @@
-
 import React, { useState, useCallback } from 'react';
-import { UploadIcon, SparklesIcon, SpinnerIcon } from './icons';
+import { UploadIcon, PulseIcon, SpinnerIcon } from './icons';
 
 interface UploadStepProps {
   onFilesSelect: (files: File[], sourceType: 'images' | 'video') => void;
 }
 
-const MAX_FRAMES = 12; // Limit total frames to prevent token overload
+const MAX_FRAMES = 30; // Increased frame limit for Gemini 3's larger context window
 
 const extractFramesFromVideo = (videoFile: File): Promise<File[]> => {
   return new Promise((resolve, reject) => {
@@ -151,8 +150,8 @@ export const UploadStep: React.FC<UploadStepProps> = ({ onFilesSelect }) => {
 
   return (
     <div className="w-full max-w-3xl mx-auto text-center">
-      <SparklesIcon className="w-12 h-12 mx-auto text-primary" />
-      <h1 className="text-3xl sm:text-4xl font-bold text-dark mt-4">Analyze Your User Flow</h1>
+      <PulseIcon className="w-16 h-16 mx-auto text-primary" />
+      <h1 className="text-3xl sm:text-4xl font-bold text-dark mt-4">Analyze your user flow</h1>
       <p className="text-slate-600 mt-2 text-lg">Upload your designs to get an instant AI-powered UX analysis.</p>
       
       <div className="mt-6 flex justify-center bg-slate-200 p-1 rounded-lg">

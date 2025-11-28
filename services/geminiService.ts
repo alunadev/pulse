@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisReport } from '../types';
 
@@ -36,7 +35,7 @@ const responseSchema = {
     },
     generalAnalysis: {
       type: Type.STRING,
-      description: "A high-level summary of the user flow's strengths and weaknesses in relation to the user's objective. Written in a professional but encouraging tone, using markdown for formatting."
+      description: "A high-level summary of the user flow's strengths and weaknesses. Written in a professional, encouraging tone. Use plain text only (no markdown, no bolding/bullets)."
     },
     positivePoints: {
       type: Type.ARRAY,
@@ -128,9 +127,9 @@ Please provide a new, refined analysis based on this feedback. Update your previ
       ? 'The flow is presented in sequential frames extracted from a video recording of a user session.' 
       : 'The flow is presented in a series of static screenshots.';
       
-    prompt = `My main goal is to: "${objective}". Based on this goal, please provide a comprehensive UX/UI analysis of the user flow. ${sourceDescription} The flow proceeds in the order the images are provided. 
+    prompt = `My main goal is to: "${objective}". Based on this goal, please provide a comprehensive and deep UX/UI analysis of the user flow using your advanced reasoning capabilities. ${sourceDescription} The flow proceeds in the order the images are provided. 
     
-    ${personaInstruction} Your analysis should be structured according to the JSON schema provided. Ensure your analysis is insightful and your recommendations are concrete and actionable.
+    ${personaInstruction} Your analysis should be structured according to the JSON schema provided. Ensure your analysis is insightful and your recommendations are concrete, actionable, and specific to the visual evidence.
     
     In the accessibilityReport section, perform a thorough accessibility analysis of the screens based on WCAG 2.1 AA principles. Identify issues related to color contrast, alternative text for images, touch target sizes, form labeling, and semantic structure. Provide a list of accessibility issues with a severity rating.`;
   }
@@ -144,14 +143,14 @@ Please provide a new, refined analysis based on this feedback. Update your previ
   };
 
   const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-pro-preview', // Upgraded to Gemini 3 Pro
       contents,
       config: {
         responseMimeType: "application/json",
         responseSchema,
         temperature: 0.2,
-        // Enable thinking for deeper reasoning (Gemini 2.5 Flash)
-        thinkingConfig: { thinkingBudget: 4096 } 
+        // Increased thinking budget for Gemini 3 Pro
+        thinkingConfig: { thinkingBudget: 16384 } 
       },
   });
 
