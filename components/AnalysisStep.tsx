@@ -30,21 +30,24 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ objective, fileCount
 
 
   return (
-    <div className="w-full max-w-2xl mx-auto text-center">
-      <div className="py-8">
-        <PulseLoader className="w-24 h-24 mx-auto text-primary" />
+    <div className="w-full max-w-lg mx-auto text-center mt-12">
+      <div className="py-8 relative">
+          <div className="absolute inset-0 bg-primary/5 blur-3xl rounded-full"></div>
+          <div className="relative">
+            <PulseLoader className="w-16 h-16 mx-auto text-primary" />
+          </div>
       </div>
 
-      <h1 className="text-3xl font-bold text-dark mt-4">AI Thinking in Progress</h1>
-      <p className="text-slate-600 mt-2 text-lg">
-        Pulse is analyzing your <span className="font-semibold">{fileCount} screens</span> to help you <span className="font-semibold text-primary">{objective}</span>.
+      <h1 className="text-xl font-bold text-gray-900 mt-4">Analyzing Flow</h1>
+      <p className="text-sm text-gray-500 mt-2 max-w-xs mx-auto">
+        Processing <span className="font-semibold text-gray-700">{fileCount} screens</span> for objective: <span className="text-primary">{objective}</span>
       </p>
 
-      <div className="mt-8 h-6 text-slate-500 font-medium transition-opacity duration-500 animate-pulse">
-        {loadingMessages[currentMessageIndex]}
+      <div className="mt-8 flex justify-center">
+          <div className="px-4 py-2 bg-white border border-gray-200 rounded-full shadow-sm text-xs font-mono text-primary animate-pulse">
+              {loadingMessages[currentMessageIndex]}
+          </div>
       </div>
-
-      <p className="text-sm text-slate-400 mt-12">This might take a minute for deep reasoning...</p>
     </div>
   );
 };

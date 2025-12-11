@@ -32,3 +32,30 @@ export interface AnalysisReport {
   benchmarks: Benchmark[];
   accessibilityReport: AccessibilityIssue[];
 }
+
+// --- Hierarchy Definitions (Supabase-ready) ---
+
+export type WorkflowStatus = 'draft' | 'analyzing' | 'completed';
+
+export interface Workflow {
+  id: string;
+  projectId: string;
+  name: string;
+  updatedAt: Date;
+  status: WorkflowStatus;
+  // In a real DB, these would be separate tables or JSONB columns
+  step: Step;
+  files: File[]; 
+  objective: string;
+  persona: string;
+  sourceType: 'images' | 'video';
+  report: AnalysisReport | null;
+}
+
+export interface Project {
+  id: string;
+  name: string;
+  description?: string;
+  createdAt: Date;
+  workflows: Workflow[]; // In a real DB, this is a relation, not a direct property
+}

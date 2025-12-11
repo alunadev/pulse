@@ -1,15 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisReport } from '../types';
 
-const API_KEY = process.env.API_KEY;
-
-if (!API_KEY) {
-  // This is a fallback for development and should be handled by the environment.
-  console.warn("API_KEY is not set in environment variables.");
-}
-
-const ai = new GoogleGenAI({ apiKey: API_KEY! });
-
 const fileToGenerativePart = async (file: File) => {
   const base64EncodedData = await new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
@@ -99,9 +90,13 @@ export const analyzeFlow = async (
   persona: string = 'standard',
   refinement?: { previousReport: AnalysisReport; userFeedback: string; }
 ): Promise<AnalysisReport> => {
-  if (!API_KEY) {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
     throw new Error("API key is missing. Please set the API_KEY environment variable.");
   }
+
+  // Initialize inside the function to use the environment variable securely and robustly
+  const ai = new GoogleGenAI({ apiKey });
 
   const imageParts = await Promise.all(files.map(fileToGenerativePart));
 

@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from 'react';
-import { UploadIcon, PulseIcon, SpinnerIcon } from './icons';
+import React, { useState } from 'react';
+import { UploadIcon, SpinnerIcon } from './icons';
 
 interface UploadStepProps {
   onFilesSelect: (files: File[], sourceType: 'images' | 'video') => void;
 }
 
-const MAX_FRAMES = 30; // Increased frame limit for Gemini 3's larger context window
+const MAX_FRAMES = 30;
 
 const extractFramesFromVideo = (videoFile: File): Promise<File[]> => {
   return new Promise((resolve, reject) => {
@@ -22,9 +22,6 @@ const extractFramesFromVideo = (videoFile: File): Promise<File[]> => {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       const duration = video.duration;
-      
-      // Smart sampling: calculate interval to get roughly MAX_FRAMES
-      // Ensure we don't capture more than 1 frame per second for very short videos
       const calculatedInterval = duration / MAX_FRAMES;
       const interval = Math.max(1, calculatedInterval);
       
@@ -57,8 +54,6 @@ const extractFramesFromVideo = (videoFile: File): Promise<File[]> => {
       };
 
       video.onseeked = captureFrame;
-      
-      // Start the process
       video.currentTime = currentTime;
     };
 
@@ -99,7 +94,7 @@ export const UploadStep: React.FC<UploadStepProps> = ({ onFilesSelect }) => {
         setFiles(sortedFiles);
         const newPreviews = sortedFiles.map(file => URL.createObjectURL(file));
         setPreviews(newPreviews);
-    } else { // video mode
+    } else {
         const videoFile = Array.from(selectedFiles).find(file => file.type.startsWith('video/'));
         if (videoFile) {
             setFiles([videoFile]);
@@ -149,85 +144,101 @@ export const UploadStep: React.FC<UploadStepProps> = ({ onFilesSelect }) => {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto text-center">
-      <PulseIcon className="w-16 h-16 mx-auto text-primary" />
-      <h1 className="text-3xl sm:text-4xl font-bold text-dark mt-4">Analyze your user flow</h1>
-      <p className="text-slate-600 mt-2 text-lg">Upload your designs to get an instant AI-powered UX analysis.</p>
-      
-      <div className="mt-6 flex justify-center bg-slate-200 p-1 rounded-lg">
-          <button onClick={() => handleModeChange('images')} className={`px-4 py-1.5 w-1/2 rounded-md text-sm font-semibold transition-all ${uploadMode === 'images' ? 'bg-white shadow text-primary' : 'text-slate-600'}`}>Image Sequence</button>
-          <button onClick={() => handleModeChange('video')} className={`px-4 py-1.5 w-1/2 rounded-md text-sm font-semibold transition-all ${uploadMode === 'video' ? 'bg-white shadow text-primary' : 'text-slate-600'}`}>Video Capture</button>
+    <div className="w-full max-w-2xl mx-auto">
+      <div className="text-center mb-10">
+          <h2 className="text-2xl font-semibold text-gray-900">Upload Assets</h2>
+          <p className="text-sm text-gray-500 mt-1">Upload your screenshots or a video recording of the user flow.</p>
       </div>
 
-      <div className="mt-6">
-        <label
-          onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragOver={handleDragOver} onDrop={handleDrop}
-          className={`relative block w-full border-2 ${isDragging ? 'border-primary bg-primary/10' : 'border-slate-300 border-dashed'} rounded-xl p-8 text-center cursor-pointer transition-colors duration-200`}
-        >
-          <div className="flex flex-col items-center">
-            <UploadIcon />
-            <span className="mt-2 block text-base font-medium text-slate-700">
-              {uploadMode === 'images' ? 'Drag & Drop your screenshots' : 'Drag & Drop your video'}
-            </span>
-            <span className="text-slate-500 text-sm">or</span>
-            <span className="text-primary font-semibold hover:text-primary/90">
-              Click to browse files
-            </span>
-          </div>
-          <input
-            type="file"
-            multiple={uploadMode === 'images'}
-            accept={uploadMode === 'images' ? "image/png, image/jpeg, image/webp" : "video/mp4, video/webm, video/quicktime"}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            onChange={(e) => handleFiles(e.target.files)}
-          />
-        </label>
-      </div>
-      
-      {error && <p className="text-sm text-red-600 mt-2">{error}</p>}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        {/* Toggle Header */}
+        <div className="flex border-b border-gray-200">
+             <button 
+                onClick={() => handleModeChange('images')}
+                className={`flex-1 py-3 text-xs font-medium text-center transition-colors ${uploadMode === 'images' ? 'bg-gray-50 text-primary border-b-2 border-primary' : 'text-gray-600 hover:bg-gray-50'}`}
+             >
+                 Image Sequence
+             </button>
+             <button 
+                onClick={() => handleModeChange('video')}
+                className={`flex-1 py-3 text-xs font-medium text-center transition-colors ${uploadMode === 'video' ? 'bg-gray-50 text-primary border-b-2 border-primary' : 'text-gray-600 hover:bg-gray-50'}`}
+             >
+                 Video Recording
+             </button>
+        </div>
 
-      {previews.length > 0 && (
-        <div className="mt-8 text-left">
-          {uploadMode === 'images' ? (
-              <>
-                <h2 className="font-semibold text-slate-700">Your Flow ({previews.length} screens)</h2>
-                <p className="text-sm text-slate-500">Files are sorted by name. Rename them (e.g., 01, 02) to set the correct order.</p>
-                <div className="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
-                  {previews.map((src, index) => (
-                    <div key={index} className="relative group aspect-square rounded-lg overflow-hidden border border-slate-200">
-                      <img src={src} alt={`Preview ${index + 1}`} className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex items-center justify-center">
-                         <button onClick={() => handleRemoveImage(index)} className="w-8 h-8 rounded-full bg-white/80 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-          ) : (
-            <div>
-              <h2 className="font-semibold text-slate-700">Your Video Flow</h2>
-              <video src={previews[0]} controls muted className="mt-2 w-full max-w-md mx-auto rounded-lg border border-slate-200" />
+        <div className="p-8">
+            <label
+            onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragOver={handleDragOver} onDrop={handleDrop}
+            className={`relative flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg transition-all cursor-pointer ${
+                isDragging ? 'border-primary bg-primary/5' : 'border-gray-300 hover:border-gray-400 bg-gray-50/50'
+            }`}
+            >
+            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                <UploadIcon className={`w-10 h-10 mb-3 ${isDragging ? 'text-primary' : 'text-gray-400'}`} />
+                <p className="mb-2 text-sm text-gray-600">
+                    <span className="font-semibold text-primary">Click to upload</span> or drag and drop
+                </p>
+                <p className="text-xs text-gray-500">
+                    {uploadMode === 'images' ? 'PNG, JPG or WebP' : 'MP4, WebM or MOV'}
+                </p>
             </div>
-          )}
+            <input
+                type="file"
+                multiple={uploadMode === 'images'}
+                accept={uploadMode === 'images' ? "image/png, image/jpeg, image/webp" : "video/mp4, video/webm, video/quicktime"}
+                className="hidden"
+                onChange={(e) => handleFiles(e.target.files)}
+            />
+            </label>
+        </div>
+        
+        {/* Footer / Status */}
+        <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-between items-center">
+            <span className="text-xs text-gray-500">
+                {files.length > 0 ? `${files.length} file${files.length !== 1 ? 's' : ''} selected` : 'No files selected'}
+            </span>
+            <button
+                onClick={handleSubmit}
+                disabled={files.length === 0 || isExtracting}
+                className="px-4 py-2 bg-primary text-white text-xs font-medium rounded-md shadow-sm hover:bg-primaryHover disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+                 {isExtracting ? <><SpinnerIcon className="w-3 h-3 text-white"/> Processing...</> : "Continue"}
+            </button>
+        </div>
+      </div>
+
+      {/* Previews Grid */}
+      {previews.length > 0 && (
+        <div className="mt-8">
+             <div className="flex items-center justify-between mb-4">
+                 <h3 className="text-sm font-semibold text-gray-900">Preview</h3>
+                 {uploadMode === 'images' && <span className="text-xs text-gray-400">Order matters for flow analysis</span>}
+             </div>
+             
+             {uploadMode === 'images' ? (
+                 <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3">
+                    {previews.map((src, index) => (
+                        <div key={index} className="group relative aspect-[9/16] bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+                            <img src={src} alt={`Screen ${index + 1}`} className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <button onClick={() => handleRemoveImage(index)} className="p-1 rounded-full bg-white/20 hover:bg-red-500 text-white transition-colors">
+                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                                </button>
+                            </div>
+                            <div className="absolute bottom-0 left-0 right-0 bg-white/90 text-[9px] font-mono text-center py-0.5 border-t border-gray-100 text-gray-500">
+                                {index + 1}
+                            </div>
+                        </div>
+                    ))}
+                 </div>
+             ) : (
+                <div className="rounded-lg border border-gray-200 overflow-hidden bg-black">
+                     <video src={previews[0]} controls className="w-full max-h-[400px] mx-auto" />
+                </div>
+             )}
         </div>
       )}
-
-      <div className="mt-10">
-        <button
-          onClick={handleSubmit}
-          disabled={files.length === 0 || isExtracting}
-          className="w-full sm:w-auto px-12 py-3 bg-primary text-white font-semibold rounded-lg shadow-md hover:bg-primary/90 disabled:bg-slate-300 disabled:cursor-not-allowed disabled:shadow-none transition-all flex items-center justify-center gap-2"
-        >
-          {isExtracting ? (
-              <>
-                <SpinnerIcon />
-                Extracting Frames...
-              </>
-          ) : "Next: Define Objective" }
-        </button>
-      </div>
     </div>
   );
 };
